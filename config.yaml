@@ -1,0 +1,120 @@
+# config.yaml
+app:
+  name: "multi_agent_trading_system"
+  version: "1.0.0"
+  environment: "development"  # development, staging, production
+  
+trading:
+  market_hours:
+    start: "09:30"
+    end: "16:00"
+    timezone: "America/New_York"
+  
+  scheduling:
+    analysis_interval: 60  # seconds
+    monitoring_interval: 10  # seconds
+    news_check_interval: 30  # seconds
+  
+  execution:
+    paper_trading: true
+    max_daily_trades: 10
+    max_concurrent_positions: 5
+
+risk_management:
+  position_limits:
+    max_position_pct: 0.02  # 2% of account per trade
+    max_total_exposure: 0.10  # 10% total exposure
+    max_sector_exposure: 0.05  # 5% per sector
+  
+  risk_parameters:
+    max_loss_pct: 0.005  # 0.5% stop loss
+    risk_reward_ratio: 2.0  # 2:1 reward to risk
+    atr_stop_multiplier: 1.5
+  
+  circuit_breaker:
+    max_daily_loss: 0.02  # 2% account loss triggers circuit breaker
+    max_consecutive_losses: 3
+    cooldown_period: 3600  # 1 hour cooldown
+
+agents:
+  llm:
+    provider: "openai"  # openai, anthropic
+    model: "gpt-4-turbo"
+    temperature: 0.1
+    max_tokens: 2000
+  
+  monitoring:
+    news_sources: ["finnhub", "newsapi"]
+    social_sources: ["twitter", "reddit"]
+    update_frequency: 30
+  
+  analysis:
+    fundamental:
+      data_provider: "finnhub"
+      lookback_period: 252  # trading days
+    
+    technical:
+      timeframes: ["1m", "5m", "15m", "1h"]
+      indicators: ["rsi", "macd", "bb", "vwap"]
+    
+    sentiment:
+      model: "finbert"
+      social_weight: 0.3
+      news_weight: 0.7
+
+apis:
+  alpaca:
+    base_url: "https://paper-api.alpaca.markets"  # or live URL
+    api_key: "${ALPACA_API_KEY}"
+    secret_key: "${ALPACA_SECRET_KEY}"
+  
+  data_providers:
+    finnhub:
+      api_key: "${FINNHUB_API_KEY}"
+      rate_limit: 60
+    
+    newsapi:
+      api_key: "${NEWSAPI_KEY}"
+      rate_limit: 1000
+    
+    openai:
+      api_key: "${OPENAI_API_KEY}"
+    
+    anthropic:
+      api_key: "${ANTHROPIC_API_KEY}"
+
+database:
+  redis:
+    host: "localhost"
+    port: 6379
+    db: 0
+    password: "${REDIS_PASSWORD}"
+  
+  postgresql:
+    host: "localhost"
+    port: 5432
+    database: "trading_system"
+    username: "${DB_USER}"
+    password: "${DB_PASSWORD}"
+
+monitoring:
+  prometheus:
+    port: 8000
+    path: "/metrics"
+  
+  alerts:
+    slack:
+      webhook_url: "${SLACK_WEBHOOK_URL}"
+    
+    email:
+      smtp_server: "smtp.gmail.com"
+      smtp_port: 587
+      username: "${EMAIL_USER}"
+      password: "${EMAIL_PASSWORD}"
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/trading_system.log"
+  max_size: "100MB"
+  backup_count: 10
